@@ -58,17 +58,27 @@ function draw() {
           [17, 18, 19, 20]    // Pinky
         ];
 
-        stroke(0); // Set line color
+        stroke(255); // Set line color
         strokeWeight(2); // Set line thickness
 
         for (let finger of fingers) {
           for (let j = 0; j < finger.length - 1; j++) {
             let start = hand.keypoints[finger[j]];
             let end = hand.keypoints[finger[j + 1]];
-            line(start.x, start.y, end.x, end.y);
+
+            // Debugging: Check if start and end points are valid
+            if (start && end) {
+              line(start.x, start.y, end.x, end.y);
+            } else {
+              console.log("Invalid keypoints:", start, end);
+            }
           }
         }
+      } else {
+        console.log("Hand confidence too low:", hand.confidence);
       }
     }
+  } else {
+    console.log("No hands detected");
   }
 }
