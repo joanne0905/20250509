@@ -6,6 +6,8 @@ let handPose;
 let hands = [];
 let circleX, circleY; // Circle position
 let circleRadius = 50; // Circle radius
+let prevCircleX, prevCircleY; // Previous circle position
+let isDragging = false; // Flag to track if the circle is being dragged
 
 function preload() {
   // Initialize HandPose model with flipped video input
@@ -28,6 +30,8 @@ function setup() {
   // Initialize circle position at the center of the canvas
   circleX = width / 2;
   circleY = height / 2;
+  prevCircleX = circleX;
+  prevCircleY = circleY;
 
   // Start detecting hands
   handPose.detectStart(video, gotHands);
@@ -43,6 +47,8 @@ function draw() {
 
   // Ensure at least one hand is detected
   if (hands.length > 0) {
+    let circleMoved = false; // Track if the circle was moved in this frame
+
     for (let hand of hands) {
       if (hand.confidence > 0.1) {
         // Loop through keypoints and draw circles
@@ -84,20 +90,30 @@ function draw() {
           }
         }
 
-        // Check if both the index finger (keypoint 8) and thumb (keypoint 4) touch the circle
+        // Check if the index finger (keypoint 8) touches the circle
         let indexFinger = hand.keypoints[8];
-        let thumb = hand.keypoints[4];
-        if (indexFinger && thumb) {
-          let dIndex = dist(indexFinger.x, indexFinger.y, circleX, circleY);
-          let dThumb = dist(thumb.x, thumb.y, circleX, circleY);
-
-          // If both fingers are touching the circle, move the circle
-          if (dIndex < circleRadius && dThumb < circleRadius) {
-            circleX = (indexFinger.x + thumb.x) / 2; // Move circle to the midpoint of the two fingers
-            circleY = (indexFinger.y + thumb.y) / 2;
+        if (indexFinger) {
+          let d = dist(indexFinger.x, indexFinger.y, circleX, circleY);
+          if (d < circleRadius) {
+            // Move the circle to follow the index finger
+            prevCircleX = circleX;
+            prevCircleY = circleY;
+            circleX = indexFinger.x;
+            circleY = indexFinger.y;
+            circleMoved = true;
           }
         }
       }
+    }
+
+    // If the circle was moved, draw the trail
+    if (circleMoved) {
+      stroke(255, 0, 0); // Red trail
+      strokeWeight(2);
+      line(prevCircleX, prevCircleY, circleX, circleY);
+      isDragging = true;
+    } else {
+      isDragging = false;
     }
   }
 }
