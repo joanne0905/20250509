@@ -48,6 +48,26 @@ function draw() {
           noStroke();
           circle(keypoint.x, keypoint.y, 16);
         }
+
+        // Draw lines connecting keypoints for each finger
+        let fingers = [
+          [0, 1, 2, 3, 4],    // Thumb
+          [5, 6, 7, 8],       // Index finger
+          [9, 10, 11, 12],    // Middle finger
+          [13, 14, 15, 16],   // Ring finger
+          [17, 18, 19, 20]    // Pinky
+        ];
+
+        stroke(0); // Set line color
+        strokeWeight(2); // Set line thickness
+
+        for (let finger of fingers) {
+          for (let j = 0; j < finger.length - 1; j++) {
+            let start = hand.keypoints[finger[j]];
+            let end = hand.keypoints[finger[j + 1]];
+            line(start.x, start.y, end.x, end.y);
+          }
+        }
       }
     }
   }
