@@ -8,6 +8,7 @@ let circleX, circleY; // Circle position
 let circleRadius = 50; // Circle radius
 let prevCircleX, prevCircleY; // Previous circle position
 let isDragging = false; // Flag to track if the circle is being dragged
+let trail = []; // Array to store the trail points
 
 function preload() {
   // Initialize HandPose model with flipped video input
@@ -39,6 +40,16 @@ function setup() {
 
 function draw() {
   image(video, 0, 0);
+
+  // Draw the trail
+  stroke(255, 0, 0); // Red trail
+  strokeWeight(2);
+  noFill();
+  beginShape();
+  for (let point of trail) {
+    vertex(point.x, point.y);
+  }
+  endShape();
 
   // Draw the circle
   fill(0, 255, 0); // Green circle
@@ -101,19 +112,15 @@ function draw() {
             circleX = indexFinger.x;
             circleY = indexFinger.y;
             circleMoved = true;
+
+            // Add the current position to the trail
+            trail.push({ x: circleX, y: circleY });
           }
         }
       }
     }
 
-    // If the circle was moved, draw the trail
-    if (circleMoved) {
-      stroke(255, 0, 0); // Red trail
-      strokeWeight(2);
-      line(prevCircleX, prevCircleY, circleX, circleY);
-      isDragging = true;
-    } else {
-      isDragging = false;
-    }
+    // Update dragging state
+    isDragging = circleMoved;
   }
 }
