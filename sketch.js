@@ -7,7 +7,6 @@ let hands = [];
 let circleX, circleY; // Circle position
 let circleRadius = 50; // Circle radius
 let prevCircleX, prevCircleY; // Previous circle position
-let isDragging = false; // Flag to track if the circle is being dragged
 let trail = []; // Array to store the trail points
 
 function preload() {
