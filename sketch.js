@@ -84,14 +84,17 @@ function draw() {
           }
         }
 
-        // Check if the index finger (keypoint 8) touches the circle
+        // Check if both the index finger (keypoint 8) and thumb (keypoint 4) touch the circle
         let indexFinger = hand.keypoints[8];
-        if (indexFinger) {
-          let d = dist(indexFinger.x, indexFinger.y, circleX, circleY);
-          if (d < circleRadius) {
-            // Move the circle to follow the index finger
-            circleX = indexFinger.x;
-            circleY = indexFinger.y;
+        let thumb = hand.keypoints[4];
+        if (indexFinger && thumb) {
+          let dIndex = dist(indexFinger.x, indexFinger.y, circleX, circleY);
+          let dThumb = dist(thumb.x, thumb.y, circleX, circleY);
+
+          // If both fingers are touching the circle, move the circle
+          if (dIndex < circleRadius && dThumb < circleRadius) {
+            circleX = (indexFinger.x + thumb.x) / 2; // Move circle to the midpoint of the two fingers
+            circleY = (indexFinger.y + thumb.y) / 2;
           }
         }
       }
